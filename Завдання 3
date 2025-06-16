@@ -1,0 +1,44 @@
+import heapq
+
+def dijkstra(graph, start):
+    # Відстані до всіх вершин (початково нескінченність)
+    distances = {vertex: float('inf') for vertex in graph}
+    distances[start] = 0
+
+    # Черга з пріоритетами (відстань, вершина)
+    priority_queue = [(0, start)]
+
+    while priority_queue:
+        current_distance, current_vertex = heapq.heappop(priority_queue)
+
+        # Якщо знайдено коротший шлях до вершини — пропускаємо
+        if current_distance > distances[current_vertex]:
+            continue
+
+        for neighbor, weight in graph[current_vertex]:
+            distance = current_distance + weight
+
+            # Якщо новий шлях коротший — оновлюємо
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(priority_queue, (distance, neighbor))
+
+    return distances
+
+
+# Приклад графа у вигляді списку суміжності
+# Кожна вершина зберігає список кортежів (сусід, вага ребра)
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('A', 4), ('C', 5), ('D', 10)],
+    'C': [('A', 2), ('B', 5), ('D', 3)],
+    'D': [('B', 10), ('C', 3), ('E', 4)],
+    'E': [('D', 4)]
+}
+
+start_vertex = 'A'
+shortest_paths = dijkstra(graph, start_vertex)
+
+print(f"Найкоротші шляхи від вершини {start_vertex}:")
+for vertex, distance in shortest_paths.items():
+    print(f"Відстань до {vertex}: {distance}")
